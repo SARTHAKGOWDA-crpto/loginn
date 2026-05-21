@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+
+{% block body %}
+<div class="auth-layout">
+
+  <div class="auth-panel">
+    <div class="auth-panel__geo">
+      <svg viewBox="0 0 600 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <circle cx="100" cy="120" r="220" stroke="#1EC78A" stroke-width="0.5"/>
+        <circle cx="100" cy="120" r="150" stroke="#1EC78A" stroke-width="0.5"/>
+        <circle cx="500" cy="720" r="200" stroke="#7B6EF6" stroke-width="0.5"/>
+        <circle cx="500" cy="720" r="130" stroke="#7B6EF6" stroke-width="0.5"/>
+        <line x1="0" y1="300" x2="600" y2="700" stroke="#1EC78A" stroke-width="0.4"/>
+        <line x1="0" y1="500" x2="600" y2="100" stroke="#7B6EF6" stroke-width="0.4"/>
+        <rect x="300" y="300" width="70" height="70" stroke="#1EC78A" stroke-width="0.5" transform="rotate(45 335 335)"/>
+        <rect x="450" y="150" width="45" height="45" stroke="#7B6EF6" stroke-width="0.5" transform="rotate(20 472 172)"/>
+        <polygon points="150,550 200,630 100,630" stroke="#F0A030" stroke-width="0.5" fill="none"/>
+      </svg>
+    </div>
+
+    <div class="auth-panel__brand">
+      <div class="auth-panel__logo">NX</div>
+      <span class="auth-panel__name">Nexus</span>
+    </div>
+
+    <div class="auth-panel__copy">
+      <h1 class="auth-panel__tagline">Join thousands<br>of <em>teams.</em></h1>
+      <p class="auth-panel__sub">Create your free account in seconds. No credit card required. Cancel anytime.</p>
+    </div>
+
+    <div class="auth-panel__pills">
+      <span class="pill"><i class="fa-solid fa-user-shield"></i> Role-based Access</span>
+      <span class="pill"><i class="fa-solid fa-chart-line"></i> Audit Logs</span>
+      <span class="pill"><i class="fa-solid fa-rotate"></i> Password Recovery</span>
+    </div>
+  </div>
+
+  <div class="auth-form-area">
+    <div class="auth-box" style="max-width:460px">
+      <div class="auth-box__header">
+        <p class="auth-box__eyebrow">Get started free</p>
+        <h2 class="auth-box__title">Create your account</h2>
+        <p class="auth-box__sub">All fields marked are required.</p>
+      </div>
+
+      <form method="POST" action="{{ url_for('register') }}" id="regForm" novalidate>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="full_name">Full Name</label>
+            <div class="field__wrap">
+              <input class="field__input" type="text" id="full_name" name="full_name"
+                placeholder="sarthak" value="{{ form.get('full_name','') }}" required>
+              <span class="field__icon"><i class="fa-regular fa-id-card"></i></span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="username">Username</label>
+            <div class="field__wrap">
+              <input class="field__input" type="text" id="username" name="username"
+                placeholder="sarthak" value="{{ form.get('username','') }}" required>
+              <span class="field__icon"><i class="fa-solid fa-at"></i></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="email">Email Address</label>
+          <div class="field__wrap">
+            <input class="field__input" type="email" id="email" name="email"
+              placeholder="sarthak@example.com" value="{{ form.get('email','') }}" required>
+            <span class="field__icon"><i class="fa-regular fa-envelope"></i></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="phone">Phone <span style="color:var(--nx-faint);font-weight:300">(optional)</span></label>
+          <div class="field__wrap">
+            <input class="field__input" type="tel" id="phone" name="phone"
+              placeholder="+91 98765 43210" value="{{ form.get('phone','') }}">
+            <span class="field__icon"><i class="fa-solid fa-phone"></i></span>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="password">Password</label>
+            <div class="field__wrap">
+              <input class="field__input" type="password" id="password" name="password"
+                placeholder="••••••••" required>
+              <span class="field__icon"><i class="fa-solid fa-lock"></i></span>
+              <button type="button" class="field__toggle" id="pwToggle1">
+                <i class="fa-regular fa-eye" id="pwIcon1"></i>
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field__label" for="confirm_password">Confirm Password</label>
+            <div class="field__wrap">
+              <input class="field__input" type="password" id="confirm_password" name="confirm_password"
+                placeholder="••••••••" required>
+              <span class="field__icon"><i class="fa-solid fa-lock"></i></span>
+              <button type="button" class="field__toggle" id="pwToggle2">
+                <i class="fa-regular fa-eye" id="pwIcon2"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password strength meter -->
+        <div class="pw-meter" id="pwMeter" style="margin-top:-4px;margin-bottom:14px">
+          <div class="pw-meter__bar"><div class="pw-meter__fill" id="pwFill"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="pw-meter__label" id="pwLabel">Enter a password</span>
+          </div>
+          <div class="pw-checks" id="pwChecks">
+            <span class="pw-check" data-check="length">8+ chars</span>
+            <span class="pw-check" data-check="uppercase">Uppercase</span>
+            <span class="pw-check" data-check="number">Number</span>
+            <span class="pw-check" data-check="special">Special char</span>
+          </div>
+        </div>
+
+        <!-- Match indicator -->
+        <div id="pwMatch" style="font-size:.78rem;margin-bottom:14px;display:none"></div>
+
+        <div style="margin-bottom:1.4rem">
+          <label class="check-label">
+            <input type="checkbox" name="terms" required>
+            <span class="check-box"><i class="fa-solid fa-check"></i></span>
+            I agree to the <a href="#" style="color:var(--nx-violet)">Terms of Service</a> and <a href="#" style="color:var(--nx-violet)">Privacy Policy</a>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary" id="regBtn">
+          <span class="btn-text"><i class="fa-solid fa-user-plus"></i> &nbsp;Create Account</span>
+        </button>
+
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="{{ url_for('login') }}">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function togglePw(inputId, iconId) {
+    const i = document.getElementById(inputId);
+    const ic = document.getElementById(iconId);
+    const show = i.type === 'password';
+    i.type = show ? 'text' : 'password';
+    ic.className = show ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+  }
+  document.getElementById('pwToggle1').onclick = () => togglePw('password','pwIcon1');
+  document.getElementById('pwToggle2').onclick = () => togglePw('confirm_password','pwIcon2');
+
+  const pwInput    = document.getElementById('password');
+  const pwConfirm  = document.getElementById('confirm_password');
+  const pwFill     = document.getElementById('pwFill');
+  const pwLabel    = document.getElementById('pwLabel');
+  const pwMatchDiv = document.getElementById('pwMatch');
+
+  pwInput.addEventListener('input', async () => {
+    const pw = pwInput.value;
+    if (!pw) { pwFill.style.width='0%'; pwLabel.textContent='Enter a password'; return; }
+    const r = await fetch('/api/password-strength', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password: pw})
+    });
+    const d = await r.json();
+    const pct = (d.score / 5) * 100;
+    pwFill.style.width = pct + '%';
+    pwFill.style.background = d.color;
+    pwLabel.textContent = d.label;
+    pwLabel.style.color = d.color;
+    document.querySelectorAll('.pw-check').forEach(el => {
+      const key = el.dataset.check;
+      el.classList.toggle('pass', d.checks[key] === true);
+    });
+    checkMatch();
+  });
+
+  function checkMatch() {
+    const a = pwInput.value, b = pwConfirm.value;
+    if (!b) { pwMatchDiv.style.display='none'; return; }
+    pwMatchDiv.style.display = 'block';
+    if (a === b) {
+      pwMatchDiv.innerHTML = '<i class="fa-solid fa-check" style="color:#1EC78A"></i> <span style="color:#1EC78A">Passwords match</span>';
+    } else {
+      pwMatchDiv.innerHTML = '<i class="fa-solid fa-xmark" style="color:#F06560"></i> <span style="color:#F06560">Passwords do not match</span>';
+    }
+  }
+  pwConfirm.addEventListener('input', checkMatch);
+
+  document.getElementById('regForm').addEventListener('submit', function() {
+    const btn = document.getElementById('regBtn');
+    btn.classList.add('loading'); btn.disabled = true;
+  });
+</script>
+{% endblock %}

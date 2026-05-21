@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__logo">NX</div>
+      <span class="sidebar__name">Nexus</span>
+    </div>
+
+    <nav class="nav">
+      <span class="nav__section">Main</span>
+      <a href="{{ url_for('dashboard') }}" class="nav__item active">
+        <i class="fa-solid fa-house"></i> Dashboard
+      </a>
+      <a href="{{ url_for('profile') }}" class="nav__item">
+        <i class="fa-regular fa-user"></i> Profile
+      </a>
+
+      <span class="nav__section">Security</span>
+      <a href="#" class="nav__item">
+        <i class="fa-solid fa-shield-halved"></i> Security
+      </a>
+      <a href="#" class="nav__item">
+        <i class="fa-solid fa-list-check"></i> Audit Log
+      </a>
+      <a href="#" class="nav__item">
+        <i class="fa-solid fa-bell"></i> Notifications
+      </a>
+
+      {% if user.role == 'admin' %}
+      <span class="nav__section">Admin</span>
+      <a href="#" class="nav__item">
+        <i class="fa-solid fa-users-gear"></i> Users
+      </a>
+      <a href="#" class="nav__item">
+        <i class="fa-solid fa-chart-bar"></i> Analytics
+      </a>
+      {% endif %}
+    </nav>
+
+    <div style="padding: 0 0.75rem; margin-top: auto;">
+      <a href="{{ url_for('logout') }}" class="nav__item nav__item--danger" style="margin-bottom:12px">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </a>
+    </div>
+
+    <div class="sidebar__user">
+      <div class="avatar" style="background:{{ user.avatar_color }}">{{ user.initials }}</div>
+      <div class="sidebar__user-info">
+        <div class="sidebar__user-name">{{ user.full_name }}</div>
+        <div class="sidebar__user-role">{{ user.role }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <p class="page-header__eyebrow">{{ user.last_login.strftime('%A, %d %b %Y') if user.last_login else 'First login' }}</p>
+        <h1 class="page-header__title">Good {{ 'morning' if (user.last_login and user.last_login.hour < 12) else 'afternoon' }}, {{ user.full_name.split()[0] }} 👋</h1>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <a href="{{ url_for('profile') }}" class="btn btn--outline btn--sm">
+          <i class="fa-regular fa-user"></i> Profile
+        </a>
+        <a href="{{ url_for('logout') }}" class="btn btn--sm" style="background:rgba(240,101,96,0.12);color:var(--clr-danger);border:1px solid rgba(240,101,96,0.25);width:auto">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card stat-card--violet">
+        <div class="stat-card__icon"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-card__label">Total Users</div>
+        <div class="stat-card__value">{{ total_users }}</div>
+        <div class="stat-card__sub">Registered accounts</div>
+      </div>
+      <div class="stat-card stat-card--teal">
+        <div class="stat-card__icon"><i class="fa-solid fa-shield-check"></i></div>
+        <div class="stat-card__label">Account Status</div>
+        <div class="stat-card__value" style="font-size:1.2rem;padding-top:6px">
+          <span class="badge badge--success"><i class="fa-solid fa-circle" style="font-size:.5rem"></i> Active &amp; Secure</span>
+        </div>
+        <div class="stat-card__sub">{{ 'Verified' if user.is_verified else 'Email not verified' }}</div>
+      </div>
+      <div class="stat-card stat-card--amber">
+        <div class="stat-card__icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div class="stat-card__label">Last Login</div>
+        <div class="stat-card__value" style="font-size:1rem;padding-top:6px">
+          {{ user.last_login.strftime('%d %b, %H:%M') if user.last_login else 'Now' }}
+        </div>
+        <div class="stat-card__sub">{{ user.ip_address if user.last_login else 'Current session' }}</div>
+      </div>
+      <div class="stat-card stat-card--coral">
+        <div class="stat-card__icon"><i class="fa-solid fa-user-tag"></i></div>
+        <div class="stat-card__label">Role</div>
+        <div class="stat-card__value" style="font-size:1.2rem;padding-top:6px;text-transform:capitalize">
+          {{ user.role }}
+        </div>
+        <div class="stat-card__sub">Member since {{ user.created_at.strftime('%b %Y') }}</div>
+      </div>
+    </div>
+
+    <!-- Content grid -->
+    <div class="content-grid">
+
+      <!-- Recent login activity -->
+      <div class="card">
+        <div class="card__header">
+          <span class="card__title"><i class="fa-solid fa-list-check" style="color:var(--nx-violet);margin-right:8px"></i>Login Activity</span>
+          <span class="badge badge--muted">Last 5</span>
+        </div>
+        <div class="card__body" style="padding:0 1.5rem">
+          {% if logs %}
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>IP</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for log in logs %}
+              <tr>
+                <td>{{ log.created_at.strftime('%d %b, %H:%M') }}</td>
+                <td>{{ log.ip_address or '—' }}</td>
+                <td>
+                  {% if log.success %}
+                  <span class="badge badge--success"><i class="fa-solid fa-check"></i> Success</span>
+                  {% else %}
+                  <span class="badge badge--danger"><i class="fa-solid fa-xmark"></i> Failed</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p style="color:var(--nx-muted);font-size:.85rem;padding:1rem 0">No login history yet.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Account details -->
+      <div class="card">
+        <div class="card__header">
+          <span class="card__title"><i class="fa-regular fa-id-card" style="color:var(--nx-teal);margin-right:8px"></i>Account Details</span>
+          <a href="{{ url_for('profile') }}" class="btn btn--ghost btn--sm"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+        </div>
+        <div class="card__body" style="padding:0 1.5rem">
+          <div class="info-row">
+            <span class="info-row__label"><i class="fa-regular fa-user" style="margin-right:6px"></i>Full Name</span>
+            <span class="info-row__value">{{ user.full_name }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label"><i class="fa-solid fa-at" style="margin-right:6px"></i>Username</span>
+            <span class="info-row__value">@{{ user.username }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label"><i class="fa-regular fa-envelope" style="margin-right:6px"></i>Email</span>
+            <span class="info-row__value" style="font-size:.83rem">{{ user.email }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label"><i class="fa-solid fa-phone" style="margin-right:6px"></i>Phone</span>
+            <span class="info-row__value">{{ user.phone or '—' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label"><i class="fa-solid fa-calendar" style="margin-right:6px"></i>Member since</span>
+            <span class="info-row__value">{{ user.created_at.strftime('%d %B %Y') }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+{% endblock %}

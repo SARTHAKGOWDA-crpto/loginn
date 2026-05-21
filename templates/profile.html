@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block body %}
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <div class="sidebar__logo">NX</div>
+      <span class="sidebar__name">Nexus</span>
+    </div>
+    <nav class="nav">
+      <span class="nav__section">Main</span>
+      <a href="{{ url_for('dashboard') }}" class="nav__item"><i class="fa-solid fa-house"></i> Dashboard</a>
+      <a href="{{ url_for('profile') }}"   class="nav__item active"><i class="fa-regular fa-user"></i> Profile</a>
+      <span class="nav__section">Security</span>
+      <a href="#" class="nav__item"><i class="fa-solid fa-shield-halved"></i> Security</a>
+    </nav>
+    <div style="padding:0 .75rem;margin-top:auto">
+      <a href="{{ url_for('logout') }}" class="nav__item nav__item--danger" style="margin-bottom:12px">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </a>
+    </div>
+    <div class="sidebar__user">
+      <div class="avatar" style="background:{{ user.avatar_color }}">{{ user.initials }}</div>
+      <div class="sidebar__user-info">
+        <div class="sidebar__user-name">{{ user.full_name }}</div>
+        <div class="sidebar__user-role">{{ user.role }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <p class="page-header__eyebrow">Settings</p>
+        <h1 class="page-header__title">Your Profile</h1>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <!-- Update info -->
+      <div class="card">
+        <div class="card__header">
+          <span class="card__title"><i class="fa-regular fa-id-card" style="color:var(--nx-violet);margin-right:8px"></i>Personal Information</span>
+        </div>
+        <div class="card__body">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:1.5rem">
+            <div class="avatar avatar--xl" style="background:{{ user.avatar_color }}">{{ user.initials }}</div>
+            <div>
+              <div style="font-weight:500;color:var(--nx-text)">{{ user.full_name }}</div>
+              <div style="font-size:.82rem;color:var(--nx-muted)">@{{ user.username }} · <span class="badge badge--violet" style="font-size:.7rem">{{ user.role }}</span></div>
+            </div>
+          </div>
+
+          <form method="POST">
+            <input type="hidden" name="action" value="update_info">
+            <div class="field">
+              <label class="field__label">Full Name</label>
+              <div class="field__wrap">
+                <input class="field__input" type="text" name="full_name" value="{{ user.full_name }}">
+                <span class="field__icon"><i class="fa-regular fa-id-card"></i></span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label">Phone</label>
+              <div class="field__wrap">
+                <input class="field__input" type="tel" name="phone" value="{{ user.phone or '' }}" placeholder="Optional">
+                <span class="field__icon"><i class="fa-solid fa-phone"></i></span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label">Email</label>
+              <div class="field__wrap">
+                <input class="field__input" type="email" value="{{ user.email }}" disabled style="opacity:.5;cursor:not-allowed">
+                <span class="field__icon"><i class="fa-regular fa-envelope"></i></span>
+              </div>
+            </div>
+            <button type="submit" class="btn btn--primary" style="margin-top:.5rem">
+              <i class="fa-solid fa-floppy-disk"></i> &nbsp;Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Change password -->
+      <div class="card">
+        <div class="card__header">
+          <span class="card__title"><i class="fa-solid fa-lock" style="color:var(--nx-teal);margin-right:8px"></i>Change Password</span>
+        </div>
+        <div class="card__body">
+          <form method="POST" id="cpForm" novalidate>
+            <input type="hidden" name="action" value="change_password">
+            <div class="field">
+              <label class="field__label">Current Password</label>
+              <div class="field__wrap">
+                <input class="field__input" type="password" name="current_password" placeholder="••••••••" required>
+                <span class="field__icon"><i class="fa-solid fa-lock"></i></span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label">New Password</label>
+              <div class="field__wrap">
+                <input class="field__input" type="password" name="new_password" id="newPw" placeholder="••••••••" required>
+                <span class="field__icon"><i class="fa-solid fa-lock"></i></span>
+              </div>
+              <div class="pw-meter">
+                <div class="pw-meter__bar"><div class="pw-meter__fill" id="cpFill"></div></div>
+                <span class="pw-meter__label" id="cpLabel"></span>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label">Confirm New Password</label>
+              <div class="field__wrap">
+                <input class="field__input" type="password" name="confirm_password" placeholder="••••••••" required>
+                <span class="field__icon"><i class="fa-solid fa-lock"></i></span>
+              </div>
+            </div>
+            <button type="submit" class="btn btn--outline" style="margin-top:.5rem">
+              <i class="fa-solid fa-key"></i> &nbsp;Update Password
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Danger zone -->
+    <div class="card" style="margin-top:20px;border-color:rgba(240,101,96,0.2)">
+      <div class="card__header" style="border-color:rgba(240,101,96,0.2)">
+        <span class="card__title" style="color:var(--clr-danger)"><i class="fa-solid fa-triangle-exclamation" style="margin-right:8px"></i>Danger Zone</span>
+      </div>
+      <div class="card__body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-size:.88rem;font-weight:500;color:var(--nx-text)">Delete account</div>
+          <div style="font-size:.8rem;color:var(--nx-muted)">Permanently remove your account and all associated data.</div>
+        </div>
+        <button class="btn btn--danger btn--sm" onclick="alert('In a real app, this would confirm and delete your account.')">
+          <i class="fa-solid fa-trash"></i> Delete Account
+        </button>
+      </div>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('newPw').addEventListener('input', async function() {
+    if (!this.value) return;
+    const r=await fetch('/api/password-strength',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:this.value})});
+    const d=await r.json();
+    document.getElementById('cpFill').style.width=(d.score/5*100)+'%';
+    document.getElementById('cpFill').style.background=d.color;
+    document.getElementById('cpLabel').textContent=d.label;
+    document.getElementById('cpLabel').style.color=d.color;
+  });
+</script>
+{% endblock %}
