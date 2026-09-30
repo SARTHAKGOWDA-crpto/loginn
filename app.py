@@ -382,7 +382,7 @@ def profile():
             if not user.check_password(current_pw):
                 flash("Current password is incorrect.", "danger")
             elif new_pw != confirm_pw:
-                flash("New passwords do not match.please change it", "danger")
+                flash("New passwords do not match.", "danger")
             else:
                 errors = _validate_password(new_pw)
                 if errors:
