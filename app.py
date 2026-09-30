@@ -413,7 +413,7 @@ def password_strength():
         "long":      len(pw) >= 12,
     }
     score = sum(checks.values())
-    labels = {0: "Too weak", 1: "Weak", 2: "Fair", 3: "Good", 4: "Strong", 5: "Very strong"}
+    labels = {0: "Too weakest", 1: "Weaker", 2: "Fairly weak", 3: "Good", 4: "Strong", 5: "Very strong"}
     colors = {0: "#E24B4A", 1: "#E24B4A", 2: "#BA7517", 3: "#BA7517", 4: "#1D9E75", 5: "#1D9E75"}
     return jsonify(score=score, label=labels[score], color=colors[score], checks=checks)
 
