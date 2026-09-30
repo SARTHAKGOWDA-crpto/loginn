@@ -11,7 +11,7 @@ class Config:
     DB_PORT     = int(os.environ.get("DB_PORT", "3306"))
     DB_USER     = os.environ.get("DB_USER",     "root")
     DB_PASSWORD = os.environ.get("DB_PASSWORD", "12345")
-    DB_NAME     = os.environ.get("DB_NAME",     "fuck_off")
+    DB_NAME     = os.environ.get("DB_NAME",     "nexus_auth")
 
     SQLALCHEMY_DATABASE_URI = (
         f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
