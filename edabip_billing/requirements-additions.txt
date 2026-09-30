@@ -1,0 +1,14 @@
+# Add these to EDABIP's existing requirements.txt (versions are what this
+# module was built and tested against - feel free to loosen them to match
+# whatever the rest of the project already pins).
+fastapi>=0.115
+uvicorn[standard]>=0.30   # ASGI server to actually run the app - not pulled in by plain fastapi
+sqlalchemy>=2.0
+pydantic>=2.7
+razorpay>=1.4
+pymysql>=1.1          # MySQL driver - skip if the project already uses mysqlclient/mysql-connector
+python-dotenv>=1.0    # loads .env - main.py calls load_dotenv() at startup
+
+# Dev/test only:
+pytest>=8.0
+httpx>=0.27
