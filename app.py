@@ -336,7 +336,7 @@ def reset_password(token):
 @login_required
 def logout():
     session.clear()
-    flash("You've been logged out. See you soon!", "info")
+    flash("You've been logged out.", "info")
     return redirect(url_for("login"))
 
 
